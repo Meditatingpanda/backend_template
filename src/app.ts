@@ -8,11 +8,12 @@ import path from "path";
 import morgan from "morgan";
 const app = express();
 const port = process.env.PORT || 3000;
+const key=fs.readFileSync(path.join(__dirname, "./certificates/selfsigned.key"), "utf8");
+const cert=fs.readFileSync(path.join(__dirname, "./certificates/selfsigned.crt"), "utf8");
 const credentials = {
-  key: fs.readFileSync(path.join(__dirname, "./certificates/key.pem"), "utf8"),
-  cert: fs.readFileSync(path.join(__dirname, "./certificates/cert.pem"), "utf8"),
+  key: key,
+  cert: cert,
 };
-const server = https.createServer(credentials, app);
 app.use(morgan("dev"));
 app.use(helmet());
 app.use(cors());
@@ -23,9 +24,12 @@ app.get("/", (req: Request, res: Response) => {
   res.send("Hello World!");
 });
 
+const server = https.createServer(credentials, app);
+
 server.listen(port, () => {
-  console.log(colors.yellow(`Server running on port ${port}`));
+  console.log(colors.bgCyan(`Server running on port ${port}`));
 });
 // app.listen(port, () => {
-//   console.log(colors.yellow(`Server running on port ${port}`));
+//   console.log(colors.bgCyan(`Server running on port ${port}`));
 // });
+
